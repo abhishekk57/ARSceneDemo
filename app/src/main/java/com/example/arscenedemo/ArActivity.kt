@@ -25,7 +25,7 @@ class ArActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_ar)
-        runSceneView()
+        permission()
     }
 
    protected fun runSceneView(){
@@ -37,7 +37,7 @@ class ArActivity : AppCompatActivity() {
                 if (clickNo == 1) {
                     val anchor: Anchor = hitResult.createAnchor()
                     ModelRenderable.builder()
-                        .setSource(this, R.raw.abc) // set glb model
+                        .setSource(this, R.raw.abc)
                         .build()
                         .thenAccept { modelRenderable -> addModel(anchor, modelRenderable) }
                         .exceptionally { throwable ->
@@ -54,24 +54,24 @@ class ArActivity : AppCompatActivity() {
     private fun permission(){
         if (ContextCompat.checkSelfPermission(
                 this,
-                "Manifest.permission.CAMERA"
+                android.Manifest.permission.CAMERA
             ) == PackageManager.PERMISSION_GRANTED
         ) {
             runSceneView()
         } else {
             ActivityCompat.requestPermissions(
                 this,
-                arrayOf("Manifest.permission.CAMERA"),
+                arrayOf(android.Manifest.permission.CAMERA),
                 CAMERA_PERMISSION_REQUEST_CODE
             )
         }
     }
     private fun addModel(anchor: Anchor, modelRenderable: ModelRenderable) {
         val anchorNode = AnchorNode(anchor)
-        anchorNode.setParent(arCam!!.getArSceneView().getScene())
+        anchorNode.setParent(arCam!!.arSceneView.getScene())
         val model = TransformableNode(arCam!!.getTransformationSystem())
         model.setParent(anchorNode)
-        model.setRenderable(modelRenderable)
+        model.renderable = modelRenderable
         model.select()
     }
 
